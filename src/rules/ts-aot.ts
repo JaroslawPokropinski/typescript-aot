@@ -1,4 +1,5 @@
 import { createRule } from '../util';
+import fs from 'fs';
 
 export default createRule({
   name: 'ts-aot',
@@ -23,16 +24,29 @@ export default createRule({
       MethodDefinition(node): void {
         if (node.decorators) {
           const decorators = node.decorators;
-          let shouldCompile = false;
+          let hasAotDecorator = false;
           for (let i = 0; i < decorators.length; i++) {
             const expression = decorators[i].expression;
             if (expression.type === 'Identifier' && expression.name === 'aot') {
-              shouldCompile = true;
+              hasAotDecorator = true;
             }
           }
 
-          if (shouldCompile) {
-            context.report({ node, messageId: 'uncompilable' });
+          if (hasAotDecorator) {
+            if (!node.value.id) {
+              return context.report({ node, messageId: 'uncompilable' });
+            }
+            const str = node.value.id.name;
+
+            fs.open('C:/out.txt', 'w', (err, fd) => {
+              if (err) throw err;
+              fs.write(fd, str, (err) => {
+                if (err) throw err;
+                fs.close(fd, (err) => {
+                  if (err) throw err;
+                });
+              });
+            });
           }
         }
       },
