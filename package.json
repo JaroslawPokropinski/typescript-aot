@@ -24,7 +24,8 @@
   "dependencies": {
     "@typescript-eslint/experimental-utils": "^2.8.0"
   },
-  "peerDependencies": {
+  "devDependencies": {
+    "@types/eslint-visitor-keys": "^1.0.0",
     "@typescript-eslint/parser": "^2.8.0",
     "eslint": "^6.6.0",
     "typescript": "^3.7.2"

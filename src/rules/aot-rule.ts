@@ -17,7 +17,7 @@ export default createRule({
   defaultOptions: [
     // fill our your rule's default options here
   ],
-  create(context, defaultOptions) {
+  create(context, _defaultOptions) {
     // rule implementation here
     return {
       MethodDefinition(node): void {
