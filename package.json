@@ -4,7 +4,7 @@
   "description": "",
   "author": "JaroslawPokropinski",
   "license": "",
-  "main": "dist/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
