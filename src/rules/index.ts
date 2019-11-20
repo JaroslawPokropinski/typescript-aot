@@ -1,5 +1,5 @@
 import aotRule from './aot-rule';
 
 export = {
-  'aot-rule': aotRule,
+  'ts-aot': aotRule,
 };
