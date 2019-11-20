@@ -1,0 +1,29 @@
+{
+  "name": "eslint-plugin-typescript-aot",
+  "version": "0.0.1",
+  "description": "",
+  "author": "JaroslawPokropinski",
+  "license": "",
+  "main": "dist/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "typescript"
+  ],
+  "files": [
+    "dist",
+    "docs",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@typescript-eslint/experimental-utils": "^2.8.0",
+    "eslint": "^6.6.0",
+    "typescript": "^3.7.2"
+  }
+}
