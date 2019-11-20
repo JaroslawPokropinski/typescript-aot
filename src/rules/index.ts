@@ -1,4 +1,4 @@
-import aotRule from './aot-rule';
+import aotRule from './ts-aot';
 
 export = {
   'ts-aot': aotRule,
