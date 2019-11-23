@@ -1,6 +1,11 @@
 import { ESLintUtils } from '@typescript-eslint/experimental-utils';
 
-export const createRule = ESLintUtils.RuleCreator(
-  (name) =>
-    `https://github.com/<your-org>/<repo-name>/blob/master/docs/rules/${name}.md`
-);
+export * from './astUtils';
+export * from './createRule';
+export * from './getParserServices';
+export * from './misc';
+export * from './types';
+
+// this is done for convenience - saves migrating all of the old rules
+const { applyDefault, deepMerge, isObjectNotArray } = ESLintUtils;
+export { applyDefault, deepMerge, isObjectNotArray };

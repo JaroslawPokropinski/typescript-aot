@@ -18,7 +18,7 @@
     "sourceMap": true,
     "strict": true,
     "target": "es6",
-    "lib": ["es6"]
+    "lib": ["es2018", "dom"]
   },
   "include": ["src", "typings"]
 }
