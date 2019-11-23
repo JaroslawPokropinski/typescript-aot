@@ -45,7 +45,7 @@ function compile(dir: string, outDir: string): void {
     log('Results: ');
     log(results);
   } else {
-    fs.writeFileSync(outDir, data);
+    fs.writeFileSync(outDir, Buffer.from(data));
   }
 
   console.log = log;

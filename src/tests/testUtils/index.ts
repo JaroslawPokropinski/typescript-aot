@@ -1,6 +1,6 @@
 import * as parser from '@typescript-eslint/parser';
 import { Linter } from '@typescript-eslint/experimental-utils/dist/ts-eslint/Linter';
-import rule from '../../src/rules/ts-aot';
+import rule from '../../rules/ts-aot';
 
 function executeTests(
   tests: Array<{
@@ -49,11 +49,15 @@ function executeTests(
       log('Results: ');
       log(results);
     } else {
-      const compiled = new WebAssembly.Module(data);
+      const compiled = new WebAssembly.Module(Buffer.from(data));
       const instance = new WebAssembly.Instance(compiled, {});
+      log(Buffer.from(data));
+      const log2 = console.log;
+      console.log = log;
       if (!test.cb(instance)) {
         log(`${test.name} test failed`);
       }
+      console.log = log2;
     }
   }
 

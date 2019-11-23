@@ -137,9 +137,22 @@ export default util.createRule({
                 method.statements.push(statement);
               }
             }
-            method.getControlFlow();
+            try {
+              method.getControlFlow();
+            } catch (e) {
+              return context.report({
+                node,
+                messageId: 'uncompilable',
+                data: { reason: e.message },
+              });
+            }
+
             if (!compilationCtx.bmodule.validate()) {
-              throw new Error('Validation error');
+              return context.report({
+                node,
+                messageId: 'uncompilable',
+                data: { reason: 'Validation failed' },
+              });
             }
 
             if (compile) {

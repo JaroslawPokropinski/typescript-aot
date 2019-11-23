@@ -1,4 +1,5 @@
 import executeTests from './testUtils';
+import fs from 'fs';
 
 const testReturnCode = `
 import aot, { Int } from './aot';
@@ -12,8 +13,7 @@ export default class Myclass {
 }
 `;
 
-const testAddCode = `
-import aot, { Int } from './aot';
+const testAddCode = `import aot, { Int } from './aot';
 
 export default class Myclass {
   @aot
@@ -21,6 +21,12 @@ export default class Myclass {
     return a + b;
   }
 }
+
+const obj = new Myclass();
+
+const r = obj.handleTask(12, 13);
+obj.handleTask(42, 69);
+console.log(r);
 `;
 
 const tests = [
@@ -34,6 +40,13 @@ const tests = [
   {
     name: 'Add',
     code: testAddCode,
+    cb: (instance: WebAssembly.Instance) => {
+      return instance.exports.handleTask(42, 69) === 111;
+    },
+  },
+  {
+    name: 'Add2',
+    code: fs.readFileSync(__dirname + '/code', 'utf8'),
     cb: (instance: WebAssembly.Instance) => {
       return instance.exports.handleTask(42, 69) === 111;
     },

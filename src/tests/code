@@ -1,0 +1,14 @@
+import aot, { Int } from './aot';
+
+export default class Myclass {
+  @aot
+  handleTask(a: Int, b: Int): Int {
+    return a + b;
+  }
+}
+
+const obj = new Myclass();
+
+const r = obj.handleTask(12, 13);
+obj.handleTask(42, 69);
+console.log(r);
