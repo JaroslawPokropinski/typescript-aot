@@ -1,5 +1,4 @@
 import * as util from '../util';
-import fs from 'fs';
 import CompilationContext, { Method } from '../CompilationContext';
 import * as estree from '@typescript-eslint/typescript-estree/dist/ts-estree/ts-estree';
 import Statement from '../CompilationContext/Statement';
