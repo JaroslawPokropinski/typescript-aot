@@ -1,0 +1,1 @@
+{"version":3,"file":"floatTest.js","sourceRoot":"","sources":["../../src/tests/floatTest.ts"],"names":[],"mappings":";;AAAA,MAAM,aAAa,GAAG;;;;;;;;;CASrB,CAAC;AAEF,kBAAe;IACb;QACE,IAAI,EAAE,OAAO;QACb,IAAI,EAAE,aAAa;QACnB,EAAE,EAAE,CAAC,QAA8B,EAAE,EAAE;YACrC,OAAO,QAAQ,CAAC,OAAO,CAAC,UAAU,CAAC,IAAI,EAAE,IAAI,CAAC,KAAK,KAAK,CAAC;QAC3D,CAAC;KACF;CACF,CAAC"}
