@@ -1,11 +1,8 @@
-import executeTests from './testUtils';
-import fs from 'fs';
-
 const testReturnCode = `
 import aot, { Int } from './aot';
 
 export default class Myclass {
-  @aot
+  @aot()
   handleTask(a: Int, b: Int): Int {
     b = a;
     return b;
@@ -16,7 +13,7 @@ export default class Myclass {
 const testAddCode = `import aot, { Int } from './aot';
 
 export default class Myclass {
-  @aot
+  @aot()
   handleTask(a: Int, b: Int): Int {
     return a + b;
   }
@@ -29,7 +26,7 @@ obj.handleTask(42, 69);
 console.log(r);
 `;
 
-const tests = [
+export default [
   {
     name: 'Return',
     code: testReturnCode,
@@ -44,13 +41,4 @@ const tests = [
       return instance.exports.handleTask(42, 69) === 111;
     },
   },
-  {
-    name: 'Add2',
-    code: fs.readFileSync(__dirname + '/code', 'utf8'),
-    cb: (instance: WebAssembly.Instance) => {
-      return instance.exports.handleTask(42, 69) === 111;
-    },
-  },
 ];
-
-executeTests(tests);

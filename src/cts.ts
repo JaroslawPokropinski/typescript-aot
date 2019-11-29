@@ -2,12 +2,13 @@ import * as parser from '@typescript-eslint/parser';
 import { Linter } from '@typescript-eslint/experimental-utils/dist/ts-eslint/Linter';
 import rule from './rules/ts-aot';
 import fs from 'fs';
+import { exec } from 'child_process';
 
 function compile(dir: string): void {
   // Capture console log data
   const log = console.log;
-  let data = new Uint8Array();
-  console.log = function(p: { error?: Error; data?: Uint8Array }) {
+  let data = '';
+  console.log = function(p: { error?: Error; data?: string }) {
     if (p.error) {
       return log(`Error: ${p.error}`);
     }
@@ -51,8 +52,22 @@ function compile(dir: string): void {
     log('Results: ');
     log(results);
   } else {
-    log(data);
-    // fs.writeFileSync(outDir, Buffer.from(data));
+    try {
+      fs.mkdirSync('.temp');
+    } catch {}
+
+    fs.writeFile('.temp/out.c', data, (err) => {
+      if (err) {
+        throw err;
+      }
+      exec('emcc -Os -o compiled.wasm .temp/out.c', (error, stdout, stderr) => {
+        if (error) {
+          throw error;
+        }
+        log(stdout);
+        log(stderr);
+      });
+    });
   }
 
   console.log = log;
@@ -61,7 +76,7 @@ function compile(dir: string): void {
 const dir = process.argv[2];
 
 if (!dir) {
-  console.error('Usage: node compile.js inDir outDir');
+  console.error('Usage: node compile.js inDir');
 } else {
   compile(dir);
 }

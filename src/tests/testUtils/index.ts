@@ -27,6 +27,7 @@ function executeTests(
   linter.defineRule('ts-aot', rule);
 
   for (let test of tests) {
+    log(`Test ${test.name} started.`);
     let results = null;
     try {
       results = linter.verify(test.code, {
@@ -46,12 +47,12 @@ function executeTests(
     }
 
     if (results && results.length > 0) {
+      log(`${test.name} test failed (got linter results)`);
       log('Results: ');
       log(results);
     } else {
       const compiled = new WebAssembly.Module(Buffer.from(data));
       const instance = new WebAssembly.Instance(compiled, {});
-      log(Buffer.from(data));
       const log2 = console.log;
       console.log = log;
       if (!test.cb(instance)) {
