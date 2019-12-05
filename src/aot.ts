@@ -18,4 +18,14 @@ export default function aot(dir: string) {
 }
 
 export type Int = number;
-export type Float = number;
+export class Float extends Number {
+  constructor(x: number) {
+    super(x);
+  }
+  add(_y: Float): Float {
+    throw new Error();
+  }
+  ge(_y: Float): Float {
+    throw new Error();
+  }
+}

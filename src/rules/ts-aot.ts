@@ -2,6 +2,8 @@ import * as util from '../util';
 import CompilationDirector from '../compilator/CompilationDirector';
 import LlvmBuilder from '../compilator/LlvmBuilder';
 
+var parserServices = null;
+
 export default util.createRule({
   name: 'ts-aot',
   meta: {
@@ -14,13 +16,16 @@ export default util.createRule({
     messages: {
       uncompilable: 'Failed to process aot code: {{ reason }}',
     },
-    schema: [],
+    schema: [{'type': 'boolean'}],
   },
   defaultOptions: [false],
   create(context, [compile]) {
     // rule implementation here
+    parserServices = util.getParserServices(context);
+    // const checker = parserServices.program.getTypeChecker();
+
     const builder = new LlvmBuilder();
-    const director = new CompilationDirector(builder);
+    const director = new CompilationDirector(parserServices, builder);
 
     return {
       MethodDefinition(node): void {

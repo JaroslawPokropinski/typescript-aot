@@ -11,6 +11,8 @@ import Statement from './Statement';
 import WhileStatement from './StatementImpl/WhileStatement';
 import Literal from './ExpressionImpl/Literal';
 import { IdentifierDeclaration } from './StatementImpl/VariableDeclarationStatement';
+import NewExpression from './ExpressionImpl/NewExpression';
+import CallExpression from './ExpressionImpl/CallExpression';
 
 class LlvmStatementVisitor extends StatementVisitor {
   text = '';
@@ -54,6 +56,7 @@ class LlvmExpressionVisitor extends ExpressionVisitor {
   text = '';
 
   visit(e: Expression): string {
+    this.text = 'It is an error!';
     e.visit(this);
     return this.text;
   }
@@ -70,6 +73,20 @@ class LlvmExpressionVisitor extends ExpressionVisitor {
 
   onLiteral(e: Literal) {
     this.text = e.node.raw;
+  }
+
+  onNew(e: NewExpression) {
+    try {
+      const t = mapType(e.callee.name);
+      this.text = `((${t})${this.visit(e.args[0])})`
+      return
+    } catch(_e) {}
+    
+    this.text = `new ${this.visit(e.callee)}(${e.args.map((v) => this.visit(v)).join(',')})`;
+  }
+
+  onCall(e: CallExpression) {
+    this.text = `(${this.visit(e.left)}) ${e.operator} (${this.visit(e.right)})`;
   }
 }
 

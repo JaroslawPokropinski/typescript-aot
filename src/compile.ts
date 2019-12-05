@@ -34,6 +34,7 @@ function compile(dir: string): void {
     results = linter.verify(input, {
       parser: 'typescript-parser',
       parserOptions: {
+        project: '',
         ecmaVersion: 2018,
         sourceType: 'module',
       },

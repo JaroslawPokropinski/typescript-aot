@@ -18,11 +18,11 @@ import path from 'path';
 
 export default class Myclass {
   @aot(path.join(__dirname, 'compiled.wasm'))
-  handleTask(a: Int, b: Int): Int {
-    let r: Int = 0;
+  handleTask(a: Float, b: Float): Float {
+    let r: Float = new Float(0);
     while (a >= b) {
       a = a - b;
-      r = r + 1;
+      r = r + new Float(1);
     }
     return r;
   }
@@ -32,7 +32,7 @@ export default class Myclass {
 Compile
 
 ```
-node eslint-plugin-typescript-aot\dist\cts.js index.ts
+node eslint-plugin-typescript-aot\dist\cli.js
 ```
 
 Eslint integration:

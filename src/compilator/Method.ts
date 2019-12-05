@@ -1,8 +1,8 @@
 import * as estree from '@typescript-eslint/typescript-estree/dist/ts-estree/ts-estree';
 import ParseError from './ParseError';
 import { AST_NODE_TYPES } from '@typescript-eslint/typescript-estree';
-import CompilationBuilder from './CompilationBuilder';
 import Statement from './Statement';
+import CompilationDirector from './CompilationDirector';
 
 function getParameterInfo(
   parameter: estree.Parameter
@@ -39,7 +39,7 @@ export default class Method {
     typeName: estree.Identifier;
   }>();
   returnTypeName?: string;
-  constructor(node: estree.MethodDefinition, builder: CompilationBuilder) {
+  constructor(node: estree.MethodDefinition, director: CompilationDirector) {
     if (node.key.type !== 'Identifier') {
       throw new ParseError('Method key must be Identifier', node);
     }
@@ -76,7 +76,7 @@ export default class Method {
 
     for (let i = 0; i < astStatements.length; i++) {
       const astStatement = astStatements[i];
-      const statement = Statement.fromNode(astStatement);
+      const statement = Statement.fromNode(astStatement, director);
       this.statements.push(statement);
     }
   }

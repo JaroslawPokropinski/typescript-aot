@@ -10,7 +10,7 @@ function compile(dir: string): void {
   let data = '';
   console.log = function(p: { error?: Error; data?: string }) {
     if (p.error) {
-      return log(`Error: ${p.error}`);
+      throw p.error;
     }
     if (p.data === undefined) {
       return log(`Error: No data`);
@@ -30,11 +30,17 @@ function compile(dir: string): void {
   });
   linter.defineRule('ts-aot', rule);
 
+  const options = JSON.parse(fs.readFileSync('.eslintrc.json', 'utf-8'));
+  options.rules = {
+    'ts-aot': ['error', true],
+  }
+  log(options);
   let results = null;
   try {
     results = linter.verify(input, {
       parser: 'typescript-parser',
       parserOptions: {
+        project: './tsconfig.json',
         ecmaVersion: 2018,
         sourceType: 'module',
       },
@@ -44,13 +50,13 @@ function compile(dir: string): void {
     });
   } catch (error) {
     log(`Compilation failed (thrown exception)`);
-    log(error);
-    return;
+    return log(`Error: ${error}`);
   }
 
   if (results && results.length > 0) {
     log('Results: ');
     log(results);
+    return;
   } else {
     try {
       fs.mkdirSync('.temp');
@@ -60,7 +66,7 @@ function compile(dir: string): void {
       if (err) {
         throw err;
       }
-      exec('emcc -Os -o compiled.wasm .temp/out.c', (error, stdout, stderr) => {
+      exec('emcc -O3 -o compiled.wasm .temp/out.c', (error, stdout, stderr) => {
         if (error) {
           throw error;
         }

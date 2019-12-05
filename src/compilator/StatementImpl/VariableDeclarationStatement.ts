@@ -5,6 +5,7 @@ import { AST_NODE_TYPES } from '@typescript-eslint/typescript-estree';
 import ParseError from '../ParseError';
 import Expression from '../Expression';
 import TypeUtil from '../TypeUtil';
+import CompilationDirector from '../CompilationDirector';
 
 interface Declaration {
   visit(visitor: StatementVisitor): void;
@@ -30,11 +31,11 @@ export class IdentifierDeclaration implements Declaration {
 
 export default class VariableDeclarationStatement implements Statement {
   decl: Array<Declaration>;
-  constructor(private ast: ast.VariableDeclaration) {
+  constructor(private ast: ast.VariableDeclaration, director: CompilationDirector) {
     this.decl = this.ast.declarations.map((d: ast.VariableDeclarator) => {
       let init: Expression | undefined = undefined;
       if (d.init !== null) {
-        init = Expression.fromNode(d.init);
+        init = Expression.fromNode(d.init, director);
       }
 
       switch (d.id.type) {
