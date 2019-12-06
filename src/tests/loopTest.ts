@@ -17,7 +17,8 @@ export default [
     name: 'Loop',
     code: loopTestCode,
     cb: (instance: WebAssembly.Instance) => {
-      return instance.exports.handleTask(42.5, 69.5) === 112.0;
+      const handleTask = instance.exports.handleTask as (a: number, b: number) => number;
+      return handleTask(42.5, 69.5) === 112.0;
     },
   },
 ];

@@ -1,4 +1,6 @@
 import { CLIEngine } from '@typescript-eslint/experimental-utils/dist/ts-eslint/CLIEngine';
+import { exec } from 'child_process';
+import fs from 'fs';
 
 function compile(): void {
   // Capture console log data
@@ -6,6 +8,7 @@ function compile(): void {
   let data = '';
   console.log = function(p: { error?: Error; data?: string }) {
     if (p.error) {
+      log(`Got error: p.error!`);
       throw p.error;
     }
     if (p.data === undefined) {
@@ -14,26 +17,35 @@ function compile(): void {
     data = p.data;
   };
 
-  // const input = fs.readFileSync(dir, 'utf8');
-
-  // const linter = new Linter();
   const cli = new CLIEngine({ rules: {'typescript-aot/ts-aot': ['error', true]} });
 
-
-  // linter.defineParser('typescript-parser', {
-  //   parse(code, options) {
-  //     const program = parser.parse(code, options as parser.ParserOptions);
-  //     return program;
-  //   },
-  // });
-  // linter.defineRule('ts-aot', rule);
 
   try {
     cli.executeOnFiles(["*.ts"]);
     log(data);
   } catch(e) {
     log(`Catched Error ${e}`)
+    return;
   }
+
+  try {
+    fs.mkdirSync('.temp');
+  } catch {}
+
+  fs.writeFile('.temp/out.c', data, (err) => {
+    if (err) {
+      throw err;
+    }
+    exec('emcc -O3 -o compiled.wasm .temp/out.c', (error, stdout, stderr) => {
+      if (error) {
+        throw error;
+      }
+      log(stdout);
+      log(stderr);
+    });
+  });
+
+
   // log(JSON.stringify(report));
   
 

@@ -31,14 +31,16 @@ export default [
     name: 'Return',
     code: testReturnCode,
     cb: (instance: WebAssembly.Instance) => {
-      return instance.exports.handleTask(42, 69) === 42;
+      const handleTask = instance.exports.handleTask as (a: number, b: number) => number;
+      return handleTask(42, 69) === 42;
     },
   },
   {
     name: 'Add',
     code: testAddCode,
     cb: (instance: WebAssembly.Instance) => {
-      return instance.exports.handleTask(42, 69) === 111;
+      const handleTask = instance.exports.handleTask as (a: number, b: number) => number;
+      return handleTask(42, 69) === 111;
     },
   },
 ];

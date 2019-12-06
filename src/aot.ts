@@ -12,7 +12,8 @@ export default function aot(dir: string) {
     const instance = new WebAssembly.Instance(compiled, {});
 
     propertyDesciptor.value = function(...args: any[]) {
-      return instance.exports[propertyName](...args);
+      const foo = instance.exports[propertyName] as (...args: any[]) => any;
+      return foo(...args);
     };
   };
 }
@@ -25,6 +26,10 @@ export class Float extends Number {
   add(_y: Float): Float {
     throw new Error();
   }
+  sub(_y: Float): Float {
+    throw new Error();
+  }
+
   ge(_y: Float): Float {
     throw new Error();
   }
