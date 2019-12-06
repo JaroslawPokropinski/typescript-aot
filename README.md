@@ -15,16 +15,16 @@ npm i -D JaroslawPokropinski/typescript-aot
 Write a file with aot decorator
 
 ```
-import aot, { Int } from 'eslint-plugin-typescript-aot/dist/aot';
+import aot, { Float } from 'eslint-plugin-typescript-aot/dist/aot';
 import path from 'path';
 
-export default class Myclass {
+class Myclass {
   @aot(path.join(__dirname, 'compiled.wasm'))
   handleTask(a: Float, b: Float): Float {
     let r: Float = new Float(0);
-    while (a >= b) {
-      a = a - b;
-      r = r + new Float(1);
+    while (a.ge(b)) {
+      a = a.sub(b);
+      r = r.add(new Float(1));
     }
     return r;
   }
@@ -37,12 +37,28 @@ Compile
 node eslint-plugin-typescript-aot\dist\cli.js
 ```
 
-Eslint integration:
+.eslintrc.json:
 
 ```
-"plugins": [..., "typescript-aot"],
+{
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint", "typescript-aot"],
   "rules": {
-    ...,
-    "typescript-aot/ts-aot": 2
+    "typescript-aot/ts-aot": ["warn"]
   }
+}
+
 ```
