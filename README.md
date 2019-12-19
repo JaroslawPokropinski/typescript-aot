@@ -3,7 +3,7 @@
 [WIP] Ahead of time compilation of methods in Typescript
 
 ## Installation
-Please note that you need to have emscripten installed and in path. To verify use: `emcc -v`.
+Please note that you need to have emscripten installed and in path. To verify use: `em++ -v`.
 
 
 ```
