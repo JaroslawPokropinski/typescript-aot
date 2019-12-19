@@ -36,7 +36,7 @@ function compile(): void {
     if (err) {
       throw err;
     }
-    exec('em++ -std=c++14 --bind -o compiled.js .temp/out.cpp', (error, stdout, stderr) => {
+    exec('em++ -std=c++14 -O3 -o compiled.js .temp/out.cpp', (error, stdout, stderr) => {
       if (error) {
         throw error;
       }
