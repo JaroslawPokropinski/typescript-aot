@@ -7,7 +7,24 @@ Please note that you need to have emscripten installed and in path. To verify us
 
 
 ```
-npm i -D JaroslawPokropinski/typescript-aot
+npm i -D eslint-plugin-typescript-aot
+```
+
+Add typescript-aot plugin to eslint and set project property in .eslintrc.json:
+
+```
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint", "typescript-aot"],
+  "rules": {
+    "typescript-aot/ts-aot": ["warn"]
+  }
+}
 ```
 
 ## Usage
@@ -47,34 +64,9 @@ function main() {
 Module.onLoad(() => main());
 ```
 
+
 Compile
 
 ```
-node eslint-plugin-typescript-aot\dist\cli.js
-```
-
-.eslintrc.json:
-
-```
-{
-  "env": {
-    "browser": true,
-    "es6": true
-  },
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module",
-    "project": "./tsconfig.json"
-  },
-  "plugins": ["@typescript-eslint", "typescript-aot"],
-  "rules": {
-    "typescript-aot/ts-aot": ["warn"]
-  }
-}
-
+node node_modules\eslint-plugin-typescript-aot\dist\cli.js
 ```
