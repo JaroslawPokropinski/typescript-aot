@@ -15,20 +15,36 @@ npm i -D JaroslawPokropinski/typescript-aot
 Write a file with aot decorator
 
 ```
-import aot, { Float } from 'eslint-plugin-typescript-aot/dist/aot';
-import path from 'path';
+import aot, { Int, Float, CArray, loadModule } from 'eslint-plugin-typescript-aot/dist/aot';
+
+const Module = loadModule(require('./compiled.js'));
 
 class Myclass {
-  @aot(path.join(__dirname, 'compiled.wasm'))
-  handleTask(a: Float, b: Float): Float {
-    let r: Float = new Float(0);
-    while (a.ge(b)) {
-      a = a.sub(b);
-      r = r.add(new Float(1));
+  @aot(Module)
+  handleMax(a: CArray<Float>, n: Int): Float {
+    let max = a.get(new Int(0));
+    let i = new Int(0);
+    while (i.lt(n)) {
+      if(a.get(i).gt(max)) {
+        max = a.get(i);
+      }
+      i = i.add(new Int(1));
     }
-    return r;
+    return max;
   }
 }
+
+function main() {
+  const obj = new Myclass();
+  const floats = Module.createFloatArray();
+  floats.push(new Float(-3.0));
+  floats.push(new Float(1.0));
+  floats.push(new Float(-5.0));
+
+  console.log(obj.handleMax(floats, floats.size()));
+}
+
+Module.onLoad(() => main());
 ```
 
 Compile
