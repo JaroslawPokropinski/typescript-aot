@@ -1,7 +1,7 @@
 {
   "name": "eslint-plugin-typescript-aot",
   "version": "0.0.1",
-  "description": "",
+  "description": "Ahead of time compilation of typescript methods",
   "author": "JaroslawPokropinski",
   "license": "",
   "main": "dist/index.js",
@@ -10,9 +10,12 @@
   },
   "keywords": [
     "eslint",
+    "typescript",
+    "compiler",
+    "webassembly",
     "eslintplugin",
     "eslint-plugin",
-    "typescript"
+    "wasm"
   ],
   "files": [
     "dist",
@@ -22,8 +25,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@typescript-eslint/experimental-utils": "^2.8.0",
-    "binaryen": "^89.0.0"
+    "@typescript-eslint/experimental-utils": "^2.8.0"
   },
   "devDependencies": {
     "@types/eslint": "^6.1.3",
