@@ -15,9 +15,6 @@ export default class ReturnStatement implements Statement {
     this.expression = Expression.fromNode(ast.argument, director);
   }
 
-  process() {
-    throw new Error('Method not implemented.');
-  }
   visit(visitor: StatementVisitor): void {
     visitor.onReturn(this);
   }

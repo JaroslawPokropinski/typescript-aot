@@ -1,6 +1,6 @@
 import * as util from '../util';
 import CompilationDirector from '../compilator/CompilationDirector';
-import LlvmBuilder from '../compilator/LlvmBuilder';
+import EmscriptenBuilder from '../Emscripten/EmscriptenBuilder';
 
 var parserServices = null;
 
@@ -24,7 +24,7 @@ export default util.createRule({
     parserServices = util.getParserServices(context);
     // const checker = parserServices.program.getTypeChecker();
 
-    const builder = new LlvmBuilder();
+    const builder = new EmscriptenBuilder();
     const director = new CompilationDirector(parserServices, builder);
 
     return {

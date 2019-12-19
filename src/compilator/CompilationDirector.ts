@@ -3,7 +3,6 @@ import * as estree from '@typescript-eslint/typescript-estree/dist/ts-estree/ts-
 import Method from './Method';
 import * as util from '../util';
 import ts from 'typescript';
-import { TSNode } from '@typescript-eslint/typescript-estree';
 
 
 type RequiredParserServices = ReturnType<typeof util.getParserServices>;
@@ -24,10 +23,8 @@ export default class CompilationDirector {
     this.builder.create(method);
   }
 
-  getTsType<N extends TSNode>(node: estree.Node): ts.Type {
-    const originalNode = this.parserServices.esTreeNodeToTSNodeMap.get<
-          N
-        >(node);
+  getTsType(node: estree.Node): ts.Type {
+    const originalNode = this.parserServices.esTreeNodeToTSNodeMap.get(node);
     return this.checker.getTypeAtLocation(originalNode);
   }
 }

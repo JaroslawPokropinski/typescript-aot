@@ -3,6 +3,9 @@ import Expression from '../Expression';
 import ExpressionVisitor from '../ExpressionVisitor';
 import { AST_NODE_TYPES } from '@typescript-eslint/typescript-estree';
 import CompilationDirector from '../CompilationDirector';
+import TypeUtil from '../TypeUtil';
+import ParseError from '../ParseError';
+import BinaryExpression from './BinaryExpression';
 // import ParseError from '../ParseError';
 
 // interface _CallExpression extends Expression {}
@@ -17,11 +20,31 @@ import CompilationDirector from '../CompilationDirector';
 
 // }
 
-export default class CallExpression implements Expression {
-  operator: string = '';
-  left: Expression;
-  right: Expression;
+const ifBinaryExpression = (name: string): string | null => {
+  switch(name) {
+    case 'add':
+      return '+';
+    case 'sub':
+        return '-';
+      case 'mul':
+        return '*';
+      case 'div':
+        return '/';
+      case 'ge':
+        return '>=';
+      case 'le':
+        return '<=';
+      case 'gt':
+        return '>';
+      case 'lt':
+        return '<';
+      default:
+        return null;
+  }
+}
 
+export default class CallExpression implements Expression {
+  builtin?: { visit: (visitor: ExpressionVisitor) => void };
   
   constructor(ast: ast.CallExpression, director: CompilationDirector) {
     if (ast.callee.type === AST_NODE_TYPES.MemberExpression) {
@@ -29,46 +52,44 @@ export default class CallExpression implements Expression {
         // if INT or FLOAT and ast.callee.property add then perform addition
         const type = director.getTsType(ast.callee.object);
         const symbol = type.getSymbol();
-        if (symbol && (symbol.name === 'Float' || symbol.name === 'Int') && ast.callee.property.type === AST_NODE_TYPES.Identifier && ast.arguments.length === 1) {
-          switch(ast.callee.property.name) {
-            case 'add':
-              this.operator = '+';
-              break;
-            case 'sub':
-              this.operator = '-';
-              break;
-            case 'mul':
-              this.operator = '*';
-              break;
-            case 'div':
-              this.operator = '/';
-              break;
-            case 'ge':
-              this.operator = '>=';
-              break;
-            case 'le':
-              this.operator = '<=';
-              break;
-            case 'gt':
-              this.operator = '>';
-              break;
-            case 'lt':
-              this.operator = '<';
-              break;
-            default:
-              throw new Error('Thats not fine (in CallExpression case)');
+        if (symbol && TypeUtil.isBuiltinType(symbol.name)) {
+          if (ast.callee.property.type !== AST_NODE_TYPES.Identifier) {
+            throw new ParseError("Builtin method error", ast);
           }
-          this.left = Expression.fromNode(ast.callee.object, director);
-          this.right = Expression.fromNode(ast.arguments[0], director);
-          return;
-        }
-        
-        throw new Error('Thats not fine (in CallExpression)');
+          const obj = ast.callee.object;
+          const op = ifBinaryExpression(ast.callee.property.name);
+          if (op) {
+            this.builtin = { visit: (visitor) => visitor.onBinary(BinaryExpression.create(
+              Expression.fromNode(obj, director),
+              Expression.fromNode(ast.arguments[0], director),
+              op
+              )
+            )}
+            return;
+          };
+
+          switch(ast.callee.property.name) {
+            case 'get':
+              return this.builtin = { visit: (visitor) => {
+                visitor.onGet({
+                  left: Expression.fromNode(obj, director),
+                  index: Expression.fromNode(ast.arguments[0], director),
+                });
+              }};
+              
+            default:
+              throw new ParseError('Thats not fine (in CallExpression case), operator: ' + ast.callee.property.name, ast);
+          }
+        }        
+        throw new ParseError('Thats not fine (in CallExpression)', ast);
     }
     throw new Error('Expected member expression');
   }
 
   visit(visitor: ExpressionVisitor): void {
+    if (this.builtin) {
+      return this.builtin.visit(visitor);
+    }
     visitor.onCall(this);
   }
 }

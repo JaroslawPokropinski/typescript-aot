@@ -32,9 +32,6 @@ export default class ExpressionStatement implements Statement {
     this.operator = ast.expression.operator;
   }
 
-  process() {
-    throw new Error('Method not implemented.');
-  }
   visit(visitor: StatementVisitor): void {
     visitor.onExpression(this);
   }

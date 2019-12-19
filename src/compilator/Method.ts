@@ -4,31 +4,75 @@ import { AST_NODE_TYPES } from '@typescript-eslint/typescript-estree';
 import Statement from './Statement';
 import CompilationDirector from './CompilationDirector';
 
+// function getParameterInfo(
+//   parameter: estree.Parameter
+// ): { name: estree.Identifier; typeName: estree.Identifier } {
+//   if (parameter.type !== 'Identifier') {
+//     throw new ParseError('Parameter must be Identifier.', parameter);
+//   }
+
+//   if (parameter.typeAnnotation === undefined) {
+//     throw new ParseError('Parameter must have type annotation.', parameter);
+//   }
+
+//   if (parameter.typeAnnotation.typeAnnotation.type !== 'TSTypeReference') {
+//     throw new ParseError(
+//       'Parameter type annotation must be type reference.',
+//       parameter
+//     );
+//   }
+
+//   if (parameter.typeAnnotation.typeAnnotation.typeName.type !== 'Identifier') {
+//     throw new ParseError('Parameter type name must be Identifier.', parameter);
+//   }
+//   return {
+//     name: parameter,
+//     typeName: parameter.typeAnnotation.typeAnnotation.typeName,
+//   };
+// }
+
 function getParameterInfo(
-  parameter: estree.Parameter
-): { name: estree.Identifier; typeName: estree.Identifier } {
+  parameter: estree.Parameter,
+  director: CompilationDirector,
+): { name: estree.Identifier; typeName: string, typeArguments?: Array<string> } {
+
   if (parameter.type !== 'Identifier') {
     throw new ParseError('Parameter must be Identifier.', parameter);
   }
-
-  if (parameter.typeAnnotation === undefined) {
-    throw new ParseError('Parameter must have type annotation.', parameter);
+  const tsType = director.getTsType(parameter);
+  let typeArguments: Array<string> | undefined = undefined;
+  
+  if (parameter?.typeAnnotation?.typeAnnotation?.type === 'TSTypeReference') {
+    if (parameter.typeAnnotation.typeAnnotation.typeParameters) {
+      parameter.typeAnnotation.typeAnnotation.typeParameters.params.forEach((p)=> {
+        if (p.type !== AST_NODE_TYPES.TSTypeReference || p.typeName.type !== AST_NODE_TYPES.Identifier) {
+          throw new ParseError('Generic parameter error', p);
+        }
+        if (!typeArguments) {
+          typeArguments = new Array<string>();
+        }
+        typeArguments.push(p.typeName.name);        
+      })
+    }
+    
   }
+  
+  // if (tsType.target && tsType.target.typeParameters) {
+  //   // console.error('isTypeParameter', tsType.symbol.name);
+  //   const t: ts.Type[] = tsType.target.typeParameters;
 
-  if (parameter.typeAnnotation.typeAnnotation.type !== 'TSTypeReference') {
-    throw new ParseError(
-      'Parameter type annotation must be type reference.',
-      parameter
-    );
-  }
+  //   typeArguments = t.map((tp) => {
+  //     return tp.name;
+  //   })
+    
+  // }
 
-  if (parameter.typeAnnotation.typeAnnotation.typeName.type !== 'Identifier') {
-    throw new ParseError('Parameter type name must be Identifier.', parameter);
-  }
   return {
     name: parameter,
-    typeName: parameter.typeAnnotation.typeAnnotation.typeName,
+    typeName: tsType.symbol.name,
+    typeArguments: typeArguments
   };
+
 }
 
 export default class Method {
@@ -36,7 +80,8 @@ export default class Method {
   statements = Array<Statement>();
   parameters = Array<{
     name: estree.Identifier;
-    typeName: estree.Identifier;
+    typeName: string;
+    typeArguments?: Array<string>;
   }>();
   returnTypeName?: string;
   constructor(node: estree.MethodDefinition, director: CompilationDirector) {
@@ -54,7 +99,7 @@ export default class Method {
 
     for (let i = 0; i < parameters.length; i++) {
       const parameter = parameters[i];
-      this.parameters.push(getParameterInfo(parameter));
+      this.parameters.push(getParameterInfo(parameter, director));
     }
 
     if (node.value.returnType) {

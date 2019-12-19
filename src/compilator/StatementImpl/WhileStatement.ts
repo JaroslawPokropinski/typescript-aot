@@ -22,9 +22,6 @@ export default class WhileStatement implements Statement {
     }
   }
 
-  process() {
-    throw new Error('Method not implemented.');
-  }
   visit(visitor: StatementVisitor): void {
     visitor.onWhile(this);
   }

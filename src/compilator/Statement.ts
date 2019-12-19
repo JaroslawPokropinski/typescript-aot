@@ -7,9 +7,10 @@ import ExpressionStatement from './StatementImpl/ExpressionStatement';
 import WhileStatement from './StatementImpl/WhileStatement';
 import VariableDeclarationStatement from './StatementImpl/VariableDeclarationStatement';
 import CompilationDirector from './CompilationDirector';
+import IfStatement from './StatementImpl/IfStatement';
+import BlockStatement from './StatementImpl/BlockStatement';
 
 export default abstract class Statement {
-  abstract process(): any;
   abstract visit(visitor: StatementVisitor): void;
 
   static fromNode(node: ast.Statement, director: CompilationDirector): Statement {
@@ -22,8 +23,12 @@ export default abstract class Statement {
         return new WhileStatement(node, director);
       case AST_NODE_TYPES.VariableDeclaration:
         return new VariableDeclarationStatement(node, director);
+      case AST_NODE_TYPES.IfStatement:
+        return new IfStatement(node, director);
+      case AST_NODE_TYPES.BlockStatement:
+        return new BlockStatement(node, director);
       default:
-        throw new ParseError('Unknown statement.', node);
+        throw new ParseError(`Unknown statement: ${node.type}`, node);
     }
   }
 }

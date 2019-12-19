@@ -8,7 +8,7 @@ function compile(): void {
   let data = '';
   console.log = function(p: { error?: Error; data?: string }) {
     if (p.error) {
-      log(`Got error: p.error!`);
+      log(`Got error: ${p.error}!`);
       throw p.error;
     }
     if (p.data === undefined) {
@@ -32,11 +32,11 @@ function compile(): void {
     fs.mkdirSync('.temp');
   } catch {}
 
-  fs.writeFile('.temp/out.c', data, (err) => {
+  fs.writeFile('.temp/out.cpp', data, (err) => {
     if (err) {
       throw err;
     }
-    exec('emcc -O3 -o compiled.wasm .temp/out.c', (error, stdout, stderr) => {
+    exec('em++ -std=c++14 --bind -o compiled.js .temp/out.cpp', (error, stdout, stderr) => {
       if (error) {
         throw error;
       }
@@ -44,40 +44,6 @@ function compile(): void {
       log(stderr);
     });
   });
-
-
-  // log(JSON.stringify(report));
-  
-
-  // const options = JSON.parse(fs.readFileSync('.eslintrc.json', 'utf-8'));
-  // options.rules = {
-  //   'ts-aot': ['error', true],
-  // }
-  // log(options);
-  // let results = null;
-  // try {
-  //   results = linter.verify(input, {
-  //     parser: 'typescript-parser',
-  //     parserOptions: {
-  //       project: './tsconfig.json',
-  //       ecmaVersion: 2018,
-  //       sourceType: 'module',
-  //     },
-  //     rules: {
-  //       'ts-aot': ['error', true],
-  //     },
-  //   });
-  // } catch (error) {
-  //   log(`Compilation failed (thrown exception)`);
-  //   return log(`Error: ${error}`);
-  // }
   console.log = log;
 }
 compile();
-// const dir = process.argv[2];
-
-// if (!dir) {
-//   console.error('Usage: node compile.js inDir');
-// } else {
-//   compile(dir);
-// }

@@ -4,7 +4,6 @@ import StatementVisitor from '../StatementVisitor';
 import { AST_NODE_TYPES } from '@typescript-eslint/typescript-estree';
 import ParseError from '../ParseError';
 import Expression from '../Expression';
-import TypeUtil from '../TypeUtil';
 import CompilationDirector from '../CompilationDirector';
 
 interface Declaration {
@@ -40,21 +39,20 @@ export default class VariableDeclarationStatement implements Statement {
 
       switch (d.id.type) {
         case AST_NODE_TYPES.Identifier:
-          const tname = TypeUtil.getTypeName(d.id);
+          const tname = director.getTsType(d.id).getSymbol();
+          if (!tname) {
+            throw new ParseError("Cannot get declaration type", d.id);
+          }
           return new IdentifierDeclaration(
             this.ast.kind,
             d.id.name,
-            tname,
+            tname.name,
             init
           );
         default:
           throw new ParseError('Unknown declaration statement', d);
       }
     });
-  }
-
-  process() {
-    throw new Error('Method not implemented.');
   }
 
   visit(visitor: StatementVisitor): void {

@@ -23,8 +23,9 @@ export default class BinaryExpression implements Expression {
     this.left = Expression.fromNode(ast.left, director);
   }
 
-  process() {
-    throw new Error('Method not implemented.');
+  static create(left: Expression, right: Expression, op: string) {
+    const be: BinaryExpression = {left, right, op, visit: function(visitor: ExpressionVisitor) {visitor.onBinary(this);}};
+    return be;
   }
 
   visit(visitor: ExpressionVisitor): void {
